@@ -5,8 +5,8 @@ require("dotenv").config();
 
 const URL = 'mongodb+srv://admin:admin123@info-6150.xyoqijv.mongodb.net/?retryWrites=true&w=majority';
 
-const PORT = require("./port");
-const passwordRegEx = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
+const port = require("./port");
+const RegExPassword = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{8,})");
 
 const app = express();
 app.use(express.json());
@@ -31,17 +31,17 @@ return bcrypt.hashSync(password, 10);
 
 const validation = (response, name, email, password) => {
     if (!name || !email || !password) {
-      response.status(400).send({ error: "fill all the required fields" });
+      response.status(404).send({ error: "fill all the required fields" });
       return false;
     }
   
     if (password.length < 8) {
       response
-        .status(400)
+        .status(404)
         .send({ error: "Password must be at least 8 characters" });
       return false;
-    } else if (!passwordRegEx.test(password)) {
-      response.status(400).send({
+    } else if (!RegExPassword.test(password)) {
+      response.status(404).send({
         error:
           "Password must contain at least one uppercase, one lowercase & one number",
       });
@@ -83,7 +83,7 @@ let CUser = await user.findOneAndUpdate(
 console.log(CUser);
   
 if (!CUser) {
-    response.send("User not found!");
+    response.send("Data not found!");
 } else {
     response.send(await user.findOne({ email: email }));
 }
@@ -93,7 +93,7 @@ app.delete("/user/delete", async (request, response) => {
 const { email } = request.body;
   
 if (!email) {
-    response.status(400).send({ error: "Missing required fields." });
+    response.status(404).send({ error: "Missing required fields." });
     return;
 }
   
@@ -102,7 +102,7 @@ let CUser = await user.findOneAndDelete({ email: email });
 if (!CUser) {
     response.send("User not found!");
 } else {
-    response.send("User deleted successfully!");
+    response.send("Entry deleted successfully!");
 }
 });
   
@@ -110,6 +110,6 @@ app.get("/user/getall", async (_, response) => {
 response.send(await user.find());
 });
   
-app.listen(PORT, () => {
-console.log("Listening on PORT: " + PORT);
+app.listen(port, () => {
+console.log("Listening PORT: " + port);
 });
