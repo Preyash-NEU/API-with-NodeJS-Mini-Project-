@@ -93,7 +93,7 @@ app.delete("/user/delete", async (request, response) => {
 const { email } = request.body;
   
 if (!email) {
-    response.status(400).send({ error: "Missing required fields" });
+    response.status(400).send({ error: "Missing required fields." });
     return;
 }
   
